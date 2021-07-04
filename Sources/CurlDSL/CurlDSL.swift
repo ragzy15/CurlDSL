@@ -27,21 +27,21 @@ public struct CURL {
 
 	/// Builds a `URLRequest` object from the given command.
 	public func buildRequest() -> URLRequest {
-		var request = URLRequest(url: result.url)
-		request.httpMethod = result.httpMethod
+		var request = URLRequest(url: result.url!)
+        request.httpMethod = result.httpMethod?.rawValue
 		for header in result.headers {
 			request.addValue(header.value, forHTTPHeaderField: header.key)
 		}
-		if let data = result.postData {
-			request.httpBody = data.data(using: .utf8)
-		} else {
-			let joined = result.postFields.map { k, v in
-				"\(k.addingPercentEncoding(withAllowedCharacters: CharacterSet.urlQueryAllowed) ?? "")=\(v.addingPercentEncoding(withAllowedCharacters: CharacterSet.urlQueryAllowed) ?? "")"
-			}.joined(separator: "&")
-			request.httpBody = joined.data(using: .utf8)
-
-			// TODO: handle files and multi-part
-		}
+//		if let data = result.postData {
+//			request.httpBody = data.data(using: .utf8)
+//		} else {
+//			let joined = result.postFields.map { k, v in
+//				"\(k.addingPercentEncoding(withAllowedCharacters: CharacterSet.urlQueryAllowed) ?? "")=\(v.addingPercentEncoding(withAllowedCharacters: CharacterSet.urlQueryAllowed) ?? "")"
+//			}.joined(separator: "&")
+//			request.httpBody = joined.data(using: .utf8)
+//
+//			// TODO: handle files and multi-part
+//		}
 
 		if let user = result.user {
 			let loginData = String(format: "%@:%@", user, result.password ?? "").data(using: String.Encoding.utf8)!

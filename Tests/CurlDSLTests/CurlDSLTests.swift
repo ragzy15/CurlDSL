@@ -22,7 +22,7 @@ final class CurlDSLTests: XCTestCase {
 		do {
 			_ = try CURL("curl taliyugatalimba")
 			XCTFail()
-		} catch ParserError.invalidURL {
+		} catch CURLError.invalidURL {
 		} catch {
 			XCTFail()
 		}

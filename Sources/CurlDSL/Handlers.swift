@@ -13,6 +13,7 @@ public enum HandlerError: Error, LocalizedError {
 		switch self {
 		case .noData:
 			return "There is no data in the response."
+            
 		case .invalidFormat:
 			return "The format of the response is invalid."
 		}

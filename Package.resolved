@@ -1,0 +1,25 @@
+{
+  "object": {
+    "pins": [
+      {
+        "package": "NetworkKit",
+        "repositoryURL": "https://github.com/ragzy15/NetworkKit",
+        "state": {
+          "branch": "networker",
+          "revision": "2438288e2b2b783b4a57e588cd8ad0078911b305",
+          "version": null
+        }
+      },
+      {
+        "package": "PublisherKit",
+        "repositoryURL": "https://github.com/ragzy15/PublisherKit",
+        "state": {
+          "branch": "networker",
+          "revision": "33df3b65530378bcfea325d3ecde48e012784d40",
+          "version": null
+        }
+      }
+    ]
+  },
+  "version": 1
+}
