@@ -8,7 +8,7 @@ extension CURL {
         case file(URL?)
     }
     
-    struct ParseResult {
+    struct ParseResult: Equatable {
         var url: URL? = nil
         var user: String? = nil
         var password: String? = nil

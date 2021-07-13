@@ -90,3 +90,7 @@ extension CURL: Identifiable, CustomCombineIdentifierConvertible {
         combineIdentifier
     }
 }
+
+extension CURL: Equatable {
+    
+}
