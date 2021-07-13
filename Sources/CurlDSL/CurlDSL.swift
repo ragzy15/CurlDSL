@@ -1,5 +1,6 @@
 import Foundation
 import Combine
+import SwiftUI
 
 /// `CURL` converts a line of curl command into a `URLRequest` object. It helps
 /// you to create HTTP clients for your iOS/macOS/tvOS apps easier once you have
@@ -13,6 +14,7 @@ import Combine
 /// ```
 public struct CURL {
 	private var result: ParseResult
+    public let combineIdentifier = CombineIdentifier()
 
 	/// Creates a new instance.
 	///
@@ -80,4 +82,11 @@ public struct CURL {
 		let publisher = URLSession.shared.dataTaskPublisher(for: request)
 		return publisher
 	}
+}
+
+extension CURL: Identifiable, CustomCombineIdentifierConvertible {
+    
+    public var id: CombineIdentifier {
+        combineIdentifier
+    }
 }
