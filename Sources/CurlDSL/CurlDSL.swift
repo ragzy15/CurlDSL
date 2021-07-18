@@ -13,7 +13,7 @@ import SwiftUI
 /// try URL("https://httpbin.org/json").run { data, response, error in ... }
 /// ```
 public struct CURL {
-	private var result: ParseResult
+	public var result: ParseResult
     public let combineIdentifier = CombineIdentifier()
 
 	/// Creates a new instance.
@@ -29,27 +29,44 @@ public struct CURL {
 
 	/// Builds a `URLRequest` object from the given command.
 	public func buildRequest() -> URLRequest {
-		var request = URLRequest(url: result.url!)
-        request.httpMethod = result.httpMethod?.rawValue
+		var request = URLRequest(url: result.url)
+        request.httpMethod = result.httpMethod.rawValue
+        
 		for header in result.headers {
 			request.addValue(header.value, forHTTPHeaderField: header.key)
 		}
-//		if let data = result.postData {
-//			request.httpBody = data.data(using: .utf8)
-//		} else {
-//			let joined = result.postFields.map { k, v in
-//				"\(k.addingPercentEncoding(withAllowedCharacters: CharacterSet.urlQueryAllowed) ?? "")=\(v.addingPercentEncoding(withAllowedCharacters: CharacterSet.urlQueryAllowed) ?? "")"
-//			}.joined(separator: "&")
-//			request.httpBody = joined.data(using: .utf8)
-//
-//			// TODO: handle files and multi-part
-//		}
+        
+        switch result.body {
+        case .none:
+            request.httpBody = nil
+            
+        case .raw(let text):
+            request.httpBody = text.data(using: .utf8)
+            
+        case .form(let values):
+            let joined = values.map { (key, value) in
+                "\(key.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? "")=\(value.value.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? "")"
+            }.joined(separator: "&")
+            
+            request.httpBody = joined.data(using: .utf8)
+            
+        case .formURLEncoded(let values):
+            let joined = values.map { (key, value) in
+                "\(key.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? "")=\(value.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? "")"
+            }.joined(separator: "&")
+            
+            request.httpBody = joined.data(using: .utf8)
+            
+        case .binary(let url):
+            request.httpBody = FileManager.default.contents(atPath: url.path)
+        }
 
-		if let user = result.user {
-			let loginData = String(format: "%@:%@", user, result.password ?? "").data(using: String.Encoding.utf8)!
+        if case .basic(let username, let password) = result.auth {
+			let loginData = String(format: "%@:%@", username, password ?? "").data(using: .utf8)!
 			let base64LoginData = loginData.base64EncodedString()
 			request.setValue("Basic \(base64LoginData)", forHTTPHeaderField: "Authorization")
 		}
+        
 		return request
 	}
 
